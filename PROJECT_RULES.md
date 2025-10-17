@@ -291,11 +291,11 @@ project/
 
 ### 🐳 Serviços Docker Compose
 
-| Serviço | Descrição | Porta |
-|---|---|---|
-| **`app`** | Container da aplicação Go | `8080` |
-| **`db`** | MySQL 8 | `3306` |
-| **`swagger-ui`** | Documentação da API | `8081` |
+| Serviço | Container | Descrição | Porta |
+|---|---|---|---|
+| **`user-crud-auth-go`** | `user-crud-auth-go-dev` | Container da aplicação Go (desenvolvimento) | `8080` |
+| **`db`** | `user-crud-auth-go-db` | MySQL 8 (futuro) | `3306` |
+| **`swagger-ui`** | `user-crud-auth-go-swagger` | Documentação da API (futuro) | `8081` |
 
 ### ⚙️ Comandos Makefile
 

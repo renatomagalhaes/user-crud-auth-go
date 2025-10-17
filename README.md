@@ -72,6 +72,10 @@ Após iniciar com `make up`, acesse:
 
 O projeto está configurado com Air para hot reload. Modifique qualquer arquivo `.go` e veja as mudanças refletidas automaticamente sem reiniciar o container.
 
+### Container
+
+O container de desenvolvimento se chama `user-crud-auth-go-dev` para facilitar identificação e gerenciamento.
+
 ---
 
 *Para informações detalhadas sobre arquitetura, requisitos e regras de desenvolvimento, consulte o arquivo [PROJECT_RULES.md](./PROJECT_RULES.md).*

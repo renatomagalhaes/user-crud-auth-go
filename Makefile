@@ -9,7 +9,7 @@ down:
 	docker-compose -f docker/dev/docker-compose.yml down
 
 logs:
-	docker-compose -f docker/dev/docker-compose.yml logs -f app
+	docker-compose -f docker/dev/docker-compose.yml logs -f user-crud-auth-go
 
 restart:
 	docker-compose -f docker/dev/docker-compose.yml restart
@@ -18,7 +18,7 @@ build:
 	docker-compose -f docker/dev/docker-compose.yml build --no-cache
 
 shell:
-	docker-compose -f docker/dev/docker-compose.yml exec app sh
+	docker-compose -f docker/dev/docker-compose.yml exec user-crud-auth-go sh
 
 clean:
 	docker-compose -f docker/dev/docker-compose.yml down -v --remove-orphans

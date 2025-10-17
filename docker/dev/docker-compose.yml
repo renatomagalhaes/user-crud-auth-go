@@ -1,7 +1,6 @@
-version: '3.8'
-
 services:
-  app:
+  user-crud-auth-go:
+    container_name: user-crud-auth-go-dev
     build:
       context: ../..
       dockerfile: docker/dev/Dockerfile.dev
