@@ -23,6 +23,55 @@ Aplicação CRUD de usuários com autenticação OAuth2 desenvolvida em Golang, 
 
 🚧 **Em Desenvolvimento** - MVP em construção
 
+## 🚀 Como Iniciar
+
+### Pré-requisitos
+- Docker e Docker Compose instalados
+- Make (opcional, mas recomendado)
+
+### Estrutura do Projeto
+```
+project/
+├── cmd/api/           # Código da aplicação
+├── docker/            # Configurações Docker por ambiente
+│   ├── dev/               # Ambiente de desenvolvimento
+│   │   ├── Dockerfile.dev
+│   │   └── docker-compose.yml
+│   ├── production/        # Ambiente de produção (futuro)
+│   └── README.md          # Documentação Docker
+├── Makefile           # Comandos de automação
+└── README.md
+```
+
+### Comandos Básicos
+
+```bash
+# Iniciar a aplicação
+make up
+
+# Ver logs em tempo real
+make logs
+
+# Parar a aplicação
+make down
+
+# Reconstruir containers
+make build
+
+# Acessar shell do container
+make shell
+```
+
+### Testando a API
+
+Após iniciar com `make up`, acesse:
+- **URL**: http://localhost:8080
+- **Resposta**: `{"message": "Hello World!"}`
+
+### Hot Reload
+
+O projeto está configurado com Air para hot reload. Modifique qualquer arquivo `.go` e veja as mudanças refletidas automaticamente sem reiniciar o container.
+
 ---
 
 *Para informações detalhadas sobre arquitetura, requisitos e regras de desenvolvimento, consulte o arquivo [PROJECT_RULES.md](./PROJECT_RULES.md).*
