@@ -218,10 +218,20 @@ project/
 │   │   │   └── middleware/
 │   │   └── oauth/
 │   └── config/
+├── docker/
+│   ├── dev/
+│   │   ├── Dockerfile.dev
+│   │   └── docker-compose.yml
+│   └── production/
+│       ├── Dockerfile.prod (futuro)
+│       └── docker-compose.prod.yml (futuro)
 ├── scripts/
 │   ├── schema.sql
 │   └── seed.sql
-└── Makefile
+├── .air.toml
+├── Makefile
+├── go.sum
+└── go.mod
 ```
 
 ### 🎯 Descrição das Camadas
@@ -233,7 +243,6 @@ project/
 | **`interfaces/`** | Define as portas (input/output) para interação com adaptadores |
 | **`infrastructure/`** | Implementa os adaptadores concretos (DB, HTTP, OAuth, etc) |
 | **`cmd/`** | Ponto de entrada da aplicação (main, bootstrap, DI) |
-| **`tests/`** | Testes unitários e de integração |
 
 ---
 
@@ -273,10 +282,11 @@ project/
 | Ferramenta | Versão | Propósito |
 |---|---|---|
 | **Docker & Docker Compose** | Latest | Containerização e orquestração |
+| **Air** | v1.40.4 | Hot reload para desenvolvimento |
 | **Makefile** | - | Automação de tarefas |
 | **Swagger** | OpenAPI 3 | Documentação da API |
 | **MySQL** | 8.x | Banco de dados |
-| **Go Modules** | 1.19+ | Gerenciamento de dependências |
+| **Go Modules** | 1.22+ | Gerenciamento de dependências |
 | **Wire** | Latest | Injeção de dependências (opcional) |
 
 ### 🐳 Serviços Docker Compose
@@ -289,16 +299,60 @@ project/
 
 ### ⚙️ Comandos Makefile
 
+#### Desenvolvimento
 | Comando | Descrição |
 |---|---|
-| `make up` | Inicia containers |
-| `make down` | Para containers |
-| `make build` | Recompila aplicação |
+| `make up` | Inicia containers de desenvolvimento |
+| `make down` | Para containers de desenvolvimento |
+| `make build` | Recompila aplicação (desenvolvimento) |
+| `make logs` | Visualiza logs dos containers |
+| `make shell` | Acessa shell do container |
+| `make clean` | Remove containers e volumes |
+
+#### Banco de Dados (Futuro)
+| Comando | Descrição |
+|---|---|
 | `make test` | Executa testes |
 | `make lint` | Verifica estilo de código |
 | `make db-setup` | Cria estrutura do banco (schema.sql) |
 | `make db-seed` | Insere dados iniciais (seed.sql) |
 | `make db-reset` | Apaga e recria banco (setup + seed) |
+
+### 🐳 Organização Docker
+
+**Estrutura por Ambiente:**
+```
+docker/
+├── dev/                    # Ambiente de desenvolvimento
+│   ├── Dockerfile.dev      # Dockerfile para desenvolvimento local
+│   └── docker-compose.yml  # Orquestração para desenvolvimento
+└── production/             # Ambiente de produção (futuro)
+    └── Dockerfile.prod     # Dockerfile para produção (futuro)
+```
+
+**Características por Ambiente:**
+
+#### Desenvolvimento (`docker/dev/`)
+- **Dockerfile.dev**: Air para hot reload, volume mounts, debugging
+- **docker-compose.yml**: Porta 8080, volumes para live reload, variáveis Go
+- **Hot Reload**: Configurado com Air v1.40.4 para desenvolvimento ágil
+
+#### Produção (`docker/production/`) - Futuro
+- **Dockerfile.prod**: Multi-stage build, binário otimizado, imagem mínima
+
+### 🔥 Hot Reload com Air
+
+**Configuração:**
+- Arquivo `.air.toml` na raiz do projeto
+- Watch automático de arquivos `.go`
+- Exclusão de `tmp/`, `vendor/`, e arquivos de teste
+- Build para `tmp/main` binary
+- Restart automático em mudanças
+
+**Vantagens:**
+- Desenvolvimento ágil sem restart manual
+- Feedback imediato de mudanças
+- Configuração otimizada para Go
 
 ### 🗄️ Gerenciamento de Schema
 
@@ -387,7 +441,7 @@ Swagger gerado automaticamente no build ou via script Makefile.
 - ✅ Camada `application`
 
 **Estratégia (Padrão Go):**
-- Arquivos `_test.go` no mesmo diretório do código
+- **Arquivos `_test.go` no mesmo diretório do código** (não usar diretório `tests/` separado)
 - Testes focados em regras de negócio (domain/application)
 - **Sem uso de mocks** para testes unitários de domínio
 - Testes de Value Objects, Entities e Use Cases puros
@@ -462,7 +516,7 @@ docs(api): update swagger documentation
 
 | Fase | Descrição | Status |
 |---|---|---|
-| **1** | Configuração inicial do ambiente (Docker, Makefile, Swagger) | ⏳ |
+| **1** | Configuração inicial do ambiente (Docker, Makefile, Air, Hot Reload) | ✅ |
 | **2** | Implementação do domínio (Entity, VO, Repository Interface) | ⏳ |
 | **3** | Implementação dos Use Cases | ⏳ |
 | **4** | Implementação da camada de infraestrutura | ⏳ |
@@ -493,13 +547,16 @@ docs(api): update swagger documentation
 5. **Executar comandos via Docker Compose** quando possível [[memory:2172742]]
 6. **Não incluir INSERTs em migrations** - usar seeders [[memory:2187484]]
 7. **Documentação em português** com termos técnicos em inglês [[memory:2172729]]
-8. **Testes no mesmo diretório** com sufixo `_test.go` (padrão Go)
+8. **Testes no mesmo diretório** com sufixo `_test.go` (padrão Go - não usar diretório `tests/` separado)
 9. **Testes unitários sem mocks** para camada domain
 10. **Access token: 1 hora, Refresh token: 90 dias** com rotation
 11. **Newsletter: single opt-in** (aceita no cadastro)
 12. **Sessões: tabela `user_sessions`** para controle de dispositivos
 13. **Versionamento: mesmo projeto**, rotas `/api/v1`, `/api/v2`
 14. **SQL: usar `scripts/schema.sql`** e `scripts/seed.sql`
+15. **Docker: organizar por ambiente** em `docker/dev/` e `docker/production/`
+16. **Hot Reload: usar Air v1.40.4** para desenvolvimento com `.air.toml`
+17. **Go: versão 1.22+** para compatibilidade com Air
 
 ### 🔧 Padrões Técnicos
 
@@ -515,20 +572,29 @@ docs(api): update swagger documentation
 ### 🏗️ Estrutura Obrigatória
 
 ```
-internal/
-├── domain/          # Regras de negócio puras
-│   ├── user/        # Contexto de usuário
-│   └── auth/        # Contexto de autenticação
-├── application/     # Use cases e orquestração
-│   ├── command/     # Commands CQRS
-│   └── query/       # Queries CQRS
-├── infrastructure/  # Adaptadores concretos
-│   ├── persistence/ # Implementações de repositório
-│   ├── http/        # Handlers HTTP
-│   │   ├── v1/      # API v1
-│   │   └── v2/      # API v2
-│   └── oauth/       # Implementação OAuth
-└── config/          # Configurações
+project/
+├── cmd/api/         # Ponto de entrada da aplicação
+├── internal/        # Código interno da aplicação
+│   ├── domain/      # Regras de negócio puras
+│   │   ├── user/    # Contexto de usuário
+│   │   └── auth/    # Contexto de autenticação
+│   ├── application/ # Use cases e orquestração
+│   │   ├── command/ # Commands CQRS
+│   │   └── query/   # Queries CQRS
+│   ├── infrastructure/ # Adaptadores concretos
+│   │   ├── persistence/ # Implementações de repositório
+│   │   ├── http/    # Handlers HTTP
+│   │   │   ├── v1/  # API v1
+│   │   │   └── v2/  # API v2
+│   │   └── oauth/   # Implementação OAuth
+│   └── config/      # Configurações
+├── docker/          # Configurações Docker por ambiente
+│   ├── dev/         # Ambiente de desenvolvimento
+│   └── production/  # Ambiente de produção (futuro)
+├── scripts/         # Scripts de banco de dados
+├── .air.toml        # Configuração do Air para hot reload
+├── Makefile         # Comandos de automação
+└── go.mod           # Módulo Go
 ```
 
 ---
