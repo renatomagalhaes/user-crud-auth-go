@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: ../..
+      dockerfile: docker/dev/Dockerfile.dev
+    ports:
+      - "8080:8080"
+    volumes:
+      - ../..:/app
+      - /app/tmp
+    environment:
+      - GO111MODULE=on
+      - CGO_ENABLED=0
+    working_dir: /app
+    restart: unless-stopped
